@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'quotations.urls'
+ROOT_URLCONF = 'quotation_project.urls'
 
 TEMPLATES = [
     {
@@ -66,7 +66,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'quotations.wsgi.application'
+WSGI_APPLICATION = 'quotation_project.wsgi.application'
 
 
 # Database
