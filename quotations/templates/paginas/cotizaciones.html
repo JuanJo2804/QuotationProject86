@@ -1,0 +1,435 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <title>Sistema de Cotización de Productos</title>
+    <style>
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .field-required::after {
+            content: " *";
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Sistema de Cotización de Productos</h1>
+            <p class="text-sm text-gray-500">Gestión de cotizaciones para impresión y troquelado</p>
+        </div>
+
+        <!-- Tabs de Navegación -->
+        <div class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="flex space-x-8 px-6" role="tablist">
+                    <button type="button" 
+                            class="tab-button active py-4 text-sm font-medium text-gray-600 hover:text-blue-600"
+                            onclick="switchTab('cotizacion')"
+                            data-tab="cotizacion">
+                        Nueva Cotización
+                    </button>
+                    <button type="button" 
+                            class="tab-button py-4 text-sm font-medium text-gray-600 hover:text-blue-600"
+                            onclick="switchTab('historial')"
+                            data-tab="historial">
+                        Historial (0)
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Contenido de Tabs -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Panel Izquierdo - Formulario -->
+            <div class="lg:col-span-2">
+                <div id="cotizacion-tab" class="tab-content active">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-semibold text-gray-800">Datos de la Cotización</h2>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-6">Complete todos los campos obligatorios para calcular el costo</p>
+
+                        <form method="POST" id="cotizacionForm" class="space-y-6">
+                            {% csrf_token %}
+
+                            <!-- Dimensiones del Producto -->
+                            <div class="border-l-4 border-blue-500 pl-4">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-700">Dimensiones del Producto</h3>
+                                    <span class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Requerido</span>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">ancho_cm</label>
+                                        {{ form.ancho_cm }}
+                                        {% if form.ancho_cm.errors %}
+                                            <p class="text-red-500 text-xs mt-1">{{ form.ancho_cm.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">alto_cm</label>
+                                        {{ form.alto_cm }}
+                                        {% if form.alto_cm.errors %}
+                                            <p class="text-red-500 text-xs mt-1">{{ form.alto_cm.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">espacio_entre_cm</label>
+                                        {{ form.espacio_entre_cm }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cantidad y Disposición -->
+                            <div class="border-l-4 border-green-500 pl-4">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-700">Cantidad y Disposición</h3>
+                                    <span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Requerido</span>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">cantidad_horizontal</label>
+                                        {{ form.cantidad_horizontal }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">cantidad_vertical</label>
+                                        {{ form.cantidad_vertical }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">cantidad</label>
+                                        {{ form.cantidad }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Costos de Producción -->
+                            <div class="border-l-4 border-purple-500 pl-4">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-700">Costos de Producción</h3>
+                                    <span class="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Requerido</span>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">valor_por_troquelada</label>
+                                        {{ form.valor_por_troquelada }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">medida</label>
+                                        {{ form.medida }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 field-required">montaje</label>
+                                        {{ form.montaje }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Costos de Armado -->
+                            <div class="border-l-4 border-orange-500 pl-4">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-700">Costos de Armado</h3>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">bolsa_individual</label>
+                                        {{ form.bolsa_individual }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">sellada</label>
+                                        {{ form.sellada }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">cortada</label>
+                                        {{ form.cortada }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">empaque_final</label>
+                                        {{ form.empaque_final }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">llenada_gel</label>
+                                        {{ form.llenada_gel }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">pin_soporte</label>
+                                        {{ form.pin_soporte }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">samblasted</label>
+                                        {{ form.samblasted }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Otros Materiales -->
+                            <div class="border-l-4 border-indigo-500 pl-4">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-700">Otros Materiales</h3>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">mo_rubber</label>
+                                        {{ form.mo_rubber }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">numero_plotter</label>
+                                        {{ form.numero_plotter }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">perforada</label>
+                                        {{ form.perforada }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">guillotina</label>
+                                        {{ form.guillotina }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Configuración Adicional -->
+                            <div class="border-l-4 border-gray-400 pl-4">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-700">Configuración Adicional</h3>
+                                    <span class="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Espesor del material</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">espesor</label>
+                                        {{ form.espesor }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advertencia -->
+                            <div class="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-r-lg">
+                                <div class="flex items-start">
+                                    <svg class="w-5 h-5 text-orange-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-medium text-orange-800">Complete todos los campos obligatorios</p>
+                                        <p class="text-xs text-orange-700 mt-1">Los campos marcados con <span class="text-red-500">*</span> son requeridos para guardar la cotización.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botón de Acción -->
+                            <div class="flex items-center justify-end space-x-3 pt-4 border-t">
+                                <button type="button" 
+                                        class="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                    Limpiar
+                                </button>
+                                <button type="submit" 
+                                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Completar los campos requeridos
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab de Historial -->
+                <div id="historial-tab" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="text-center py-12">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">No hay cotizaciones guardadas</h3>
+                            <p class="mt-1 text-sm text-gray-500">Crea tu primera cotización para verla aquí</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Derecho - Resultados -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 sticky top-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Costo Total</h3>
+                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+
+                    {% if resultado and resultado.success %}
+                        <!-- Costo Total Principal -->
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 mb-6 text-white">
+                            <p class="text-sm opacity-90 mb-2">costo_total</p>
+                            <p class="text-4xl font-bold">${{ resultado.costos.costo_total|floatformat:2 }}</p>
+                            <p class="text-xs opacity-75 mt-2">Para {{ resultado.datos_entrada.cantidad }} unidades</p>
+                        </div>
+
+                        <!-- Desglose Rápido -->
+                        <div class="space-y-3 mb-6">
+                            <h4 class="text-sm font-medium text-gray-700 border-b pb-2">Desglose de Costos</h4>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">valor_por_troquelada</span>
+                                <span class="font-medium">${{ resultado.costos.valor_por_troquelada|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">material</span>
+                                <span class="font-medium">${{ resultado.costos.material|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">montaje</span>
+                                <span class="font-medium">${{ resultado.costos.montaje|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">medida</span>
+                                <span class="font-medium">${{ resultado.costos.medida|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">total_material</span>
+                                <span class="font-medium">${{ resultado.costos.total_material|floatformat:2 }}</span>
+                            </div>
+                            
+                            {% if resultado.costos.otros_materiales_total > 0 %}
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">otros_materiales</span>
+                                <span class="font-medium">${{ resultado.costos.otros_materiales_total|floatformat:2 }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if resultado.costos.total_armado > 0 %}
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">total_armado</span>
+                                <span class="font-medium">${{ resultado.costos.total_armado|floatformat:2 }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="flex justify-between text-sm border-t pt-2">
+                                <span class="text-gray-600">cif_8</span>
+                                <span class="font-medium">${{ resultado.costos.cif_8|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">cif_10</span>
+                                <span class="font-medium">${{ resultado.costos.cif_10|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">cif_15</span>
+                                <span class="font-medium">${{ resultado.costos.cif_15|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">admon</span>
+                                <span class="font-medium">${{ resultado.costos.admon|floatformat:2 }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Precios Sugeridos -->
+                        <div class="border-t pt-4">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">Precios de Venta</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center p-2 bg-green-50 rounded">
+                                    <span class="text-xs text-gray-600">precio_utilidad_45</span>
+                                    <span class="text-sm font-bold text-green-700">${{ resultado.costos.precio_utilidad_45|floatformat:2 }}</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-green-50 rounded">
+                                    <span class="text-xs text-gray-600">precio_utilidad_28</span>
+                                    <span class="text-sm font-bold text-green-700">${{ resultado.costos.precio_utilidad_28|floatformat:2 }}</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-green-50 rounded">
+                                    <span class="text-xs text-gray-600">precio_utilidad_17</span>
+                                    <span class="text-sm font-bold text-green-700">${{ resultado.costos.precio_utilidad_17|floatformat:2 }}</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-green-50 rounded">
+                                    <span class="text-xs text-gray-600">precio_utilidad_11</span>
+                                    <span class="text-sm font-bold text-green-700">${{ resultado.costos.precio_utilidad_11|floatformat:2 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12">
+                            <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="text-sm text-gray-500 mb-1">⚠️ Esperando datos para calcular</p>
+                            <p class="text-xs text-gray-400">Complete los campos para ver el cálculo</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remover active de todos los botones
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar el tab seleccionado
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Activar el botón correspondiente
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        // Botón limpiar
+        document.querySelector('button[type="button"]').addEventListener('click', function() {
+            document.getElementById('cotizacionForm').reset();
+        });
+    </script>
+</body>
+</html>
