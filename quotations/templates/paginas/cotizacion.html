@@ -1,51 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {% load static %}
-<link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
 
     <title>cotizacion</title>
 </head>
 <body>
-    <div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
-    <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Crear Cotización</h1>
-
-    <form action="" method="POST" class="space-y-5">
-        {% csrf_token %}
-
-        <!-- Campo de texto -->
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Nombre</label>
-            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        </div>
-
-        <!-- Campo numérico -->
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Cantidad</label>
-            <input type="number" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        </div>
-
-        <!-- Select -->
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Material</label>
-            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <option>Plástico</option>
-                <option>Metal</option>
-                <option>Cartón</option>
-            </select>
-        </div>
-
-        <!-- Botón -->
-        <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all font-semibold">
-            Enviar
-        </button>
-
-    </form>
-</div>
-
-        <h1 class="text-4xl font-bold text-blue-600">Tailwind funcionando ✅</h1>
-
+    
 </body>
 </html>
