@@ -10,6 +10,17 @@ class QuotationForm(forms.Form):
     Formulario para recibir datos de cotización desde el frontend.
     """
 
+    # Información del cliente
+    nombre_cliente = forms.CharField(
+        label='Nombre del Cliente',
+        max_length=200,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'placeholder': 'Ingrese el nombre del cliente'
+        })
+    )
+
     # Dimensiones de la marquilla
     ancho_cm = forms.FloatField(
         label='Ancho (cm)',

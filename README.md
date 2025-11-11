@@ -104,7 +104,7 @@ QuotationProject86/
 
 7. **Compilar Tailwind CSS**
    ```bash
-   npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --watch
+   npx @tailwindcss/cli -i ./static/src/input.css -o ./static/css/output.css --watch
    ```
 
 ## 🖥️ Uso
@@ -167,10 +167,10 @@ El proyecto utiliza Tailwind CSS 4. Para compilar los estilos:
 
 ```bash
 # Modo desarrollo (con watch)
-npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --watch
+npx @tailwindcss/cli -i ./static/src/input.css -o ./static/css/output.css --watch
 
 # Modo producción (optimizado)
-npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --minify
+npx @tailwindcss/cli -i ./static/src/input.css -o ./static/css/output.css --minify
 ```
 
 ## 🌿 Ramas

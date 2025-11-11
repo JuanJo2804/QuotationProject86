@@ -71,6 +71,25 @@
                         <form method="POST" id="cotizacionForm" class="space-y-6">
                             {% csrf_token %}
 
+                            <!-- Nombre del Cliente -->
+                            <div class="border-l-4 border-green-500 pl-4">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    <h3 class="text-base font-medium text-gray-700">Nombre del Cliente</h3>
+                                    <span class="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">Opcional</span>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">Nombre del Cliente</label>
+                                    {{ form.nombre_cliente }}
+                                    {% if form.nombre_cliente.errors %}
+                                        <p class="text-red-500 text-xs mt-1">{{ form.nombre_cliente.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
                             <!-- Dimensiones del Producto -->
                             <div class="border-l-4 border-blue-500 pl-4">
                                 <div class="flex items-center mb-4">
