@@ -1,0 +1,136 @@
+"""Vistas web (HTML) para la app `interfaz_crud`."""
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.contrib import messages
+from django.db.models import Q
+from .models import Cliente, Cotizacion
+from .forms import ClienteForm, CotizacionForm
+
+
+def inicio(request):
+    """Vista de inicio de la interfaz web.
+
+    Renderiza `templates/inicio.html` (ahora extiende `base.html` del proyecto).
+    """
+    return render(request, 'interfaz_crud/inicio.html')
+
+
+# Vistas para Clientes
+class ListaClientes(ListView):
+    model = Cliente
+    template_name = 'interfaz_crud/cliente_list.html'
+    context_object_name = 'clientes'
+    paginate_by = 10
+    ordering = ['-fecha_registro']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(
+                Q(nombre__icontains=q) | Q(correo__icontains=q)
+            )
+        return queryset
+
+
+class CrearCliente(CreateView):
+    model = Cliente
+    form_class = ClienteForm
+    template_name = 'interfaz_crud/cliente_form.html'
+    success_url = reverse_lazy('lista_clientes')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Cliente creado exitosamente.')
+        return super().form_valid(form)
+
+
+class EditarCliente(UpdateView):
+    model = Cliente
+    form_class = ClienteForm
+    template_name = 'interfaz_crud/cliente_form.html'
+    success_url = reverse_lazy('lista_clientes')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Cliente actualizado exitosamente.')
+        return super().form_valid(form)
+
+
+class EliminarCliente(DeleteView):
+    model = Cliente
+    template_name = 'interfaz_crud/cliente_confirm_delete.html'
+    success_url = reverse_lazy('lista_clientes')
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Cliente eliminado exitosamente.')
+        return super().delete(request, *args, **kwargs)
+
+
+class DetalleCliente(DetailView):
+    model = Cliente
+    template_name = 'interfaz_crud/cliente_detail.html'
+    context_object_name = 'cliente'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cotizaciones'] = self.object.cotizaciones.all()
+        return context
+
+
+# Vistas para Cotizaciones
+class ListaCotizaciones(ListView):
+    model = Cotizacion
+    template_name = 'interfaz_crud/cotizacion_list.html'
+    context_object_name = 'cotizaciones'
+    paginate_by = 10
+    ordering = ['-fecha_creacion']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(
+                Q(cliente__nombre__icontains=q) |
+                Q(descripcion__icontains=q)
+            )
+        return queryset
+
+
+class CrearCotizacion(CreateView):
+    model = Cotizacion
+    form_class = CotizacionForm
+    template_name = 'interfaz_crud/cotizacion_form.html'
+    success_url = reverse_lazy('lista_cotizaciones')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Cotización creada exitosamente.')
+        return super().form_valid(form)
+
+
+class EditarCotizacion(UpdateView):
+    model = Cotizacion
+    form_class = CotizacionForm
+    template_name = 'interfaz_crud/cotizacion_form.html'
+    success_url = reverse_lazy('lista_cotizaciones')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Cotización actualizada exitosamente.')
+        return super().form_valid(form)
+
+
+class EliminarCotizacion(DeleteView):
+    model = Cotizacion
+    template_name = 'interfaz_crud/cotizacion_confirm_delete.html'
+    success_url = reverse_lazy('lista_cotizaciones')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Cotización eliminada exitosamente.')
+        return super().delete(request, *args, **kwargs)
+
+
+class DetalleCotizacion(DetailView):
+    model = Cotizacion
+    template_name = 'interfaz_crud/cotizacion_detail.html'
+    context_object_name = 'cotizacion'

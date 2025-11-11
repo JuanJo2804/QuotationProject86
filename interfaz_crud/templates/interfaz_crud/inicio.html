@@ -1,0 +1,43 @@
+<!-- Plantilla: Página de inicio de la interfaz. Extiende la plantilla base del proyecto -->
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Sistema de Cotizaciones{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Sistema de Cotizaciones</h1>
+    <p class="lead">Bienvenido al sistema de gestión de clientes y cotizaciones.</p>
+    <hr class="my-4">
+    <p>¿Qué deseas hacer?</p>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Gestión de Clientes</h5>
+                    <p class="card-text">Administra la información de tus clientes.</p>
+                    <a href="{% url 'lista_clientes' %}" class="btn btn-primary">
+                        <i class="fas fa-users"></i> Ver Clientes
+                    </a>
+                    <a href="{% url 'crear_cliente' %}" class="btn btn-success">
+                        <i class="fas fa-user-plus"></i> Nuevo Cliente
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Gestión de Cotizaciones</h5>
+                    <p class="card-text">Crea y administra cotizaciones para tus clientes.</p>
+                    <a href="{% url 'lista_cotizaciones' %}" class="btn btn-primary">
+                        <i class="fas fa-file-invoice"></i> Ver Cotizaciones
+                    </a>
+                    <a href="{% url 'crear_cotizacion' %}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Nueva Cotización
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
