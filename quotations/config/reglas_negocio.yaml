@@ -1,0 +1,163 @@
+# Configuración de reglas de negocio
+cotizacion:
+  descripcion: "Parámetros y reglas de negocio para calcular tiempos y costos de producción y cotización de marquillas"
+
+  # Constantes principales (ajustar con valores reales)
+  constantes:
+    # Precio por gramo de PVC (por ejemplo: 29 CLP/gramo)
+    costo_por_gramo: 29
+    # Costo por minuto de producción (incluye arriendo, energía, servicios prorrateados)
+    costo_por_minuto_produccion: 381
+
+  # Tabla de referencia con columnas 'gramos' y 'cm2' usada para la
+  # fórmula: gramos_por_clise = area_clise_cm2 * gramos / cm2
+  tabla_gramos:
+    "0.8_mm":
+      gramos: 30
+      cm2: 373
+    "1_mm":
+      gramos: 40
+      cm2: 375
+    "1.2_mm":
+      gramos: 45
+      cm2: 373
+    "1.5_mm":
+      gramos: 75
+      cm2: 387
+    "2_mm":
+      gramos: 80
+      cm2: 375
+    "3_mm":
+      gramos: 90
+      cm2: 333
+    "5_mm":
+      gramos: 253
+      cm2: 532
+    "1_team":
+      gramos: 450
+      cm2: 480
+    "1_look":
+      gramos: 330
+      cm2: 442
+    "1_manilla":
+      gramos: 75
+      cm2: 530
+    "pin":
+      gramos: 75
+      cm2: 217
+    "doble_cara":
+      gramos: 285
+      cm2: 356
+    "dige_celular":
+      gramos: 43
+      cm2: 221
+    "portavasos":
+      gramos: 105
+      cm2: 361
+    # valor por defecto si no se especifica
+    default:
+      gramos: 75
+      cm2: 387
+
+  tinta:
+    # Costo por color por unidad (ejemplo)
+    costo_por_color_por_unidad: 20
+
+  tiempos:
+    # Tiempo de preparación/ajuste por lote (minutos) - reemplaza el concepto de 'por molde'
+    tiempo_setup_por_lote_minutos: 15
+    # Tiempo base de producción por unidad en minutos (valor ejemplo)
+    tiempo_produccion_base_minutos_por_unidad: 1.5
+    # Factor de tiempo por área (minutos por cm2)
+    tiempo_por_cm2_minutos: 0.02
+    # Tiempo mínimo por lote (para operaciones pequeñas)
+    tiempo_minimo_lote_minutos: 10
+    # Margen de seguridad operativo (porcentaje del tiempo total que agrega retardo/espera)
+    porcentaje_tiempo_seguridad: 0.10
+
+  costos_generales:
+    # Costos fijos de planta/energía por lote (ejemplo)
+    costo_fijo_por_lote: 500
+    # Porcentaje de margen comercial por encima del costo (ejemplo)
+    porcentaje_markup: 0.30
+
+  # Costos de producción adicionales que afectan la cotización
+  produccion:
+    # Costos por lote (valores de ejemplo, ajustar a datos reales)
+    servicios_por_lote: 2000 # energía, consumibles, mantenimiento (ej.)
+    arriendo_por_lote: 5000 # proporción del arriendo a imputar por lote (ej.)
+    otros_por_lote: 1000 # otros costos indirectos por lote
+
+  # Ejemplos (actualizar o eliminar según sea necesario)
+  ejemplos:
+    - nombre: "ejemplo_barkshout_4x3_140g"
+      descripcion: "Basado en cotización real: marquilla 4x3 cm, 140 g total, 1 tinta, tiempo 15 min"
+      datos:
+        ancho_cm: 4
+        alto_cm: 3
+        cantidad: 1000
+        peso_total_gramos: 140
+        colores: 1
+        tiempo_real_reportado_minutos: 15
+
+  # Tabla de referencia con precios aproximados (informativa)
+  tabla_precios_estimados:
+    - cantidad: 1000
+      costo_estimado: 758
+      precio_estimado: 1080
+    - cantidad: 2000
+      costo_estimado: 712
+      precio_estimado: 1020
+    - cantidad: 3000
+      costo_estimado: 699
+      precio_estimado: 1000
+    - cantidad: 4000
+      costo_estimado: 687
+      precio_estimado: 990
+    - cantidad: 5000
+      costo_estimado: 681
+      precio_estimado: 980
+
+# Configuración existente de gramos por cm2
+tabla_gramos_cm2:
+  "2_mm":
+    gramos: 80
+    cm2: 375
+
+# Nuevas secciones para cotización
+proceso:
+  corte_bisturi: false
+  corte_troquel: true
+  tiempo_mora_molde_min: 15
+  costo_por_gramo: 1.5
+
+empaque:
+  bolsa_individual: 0
+  sellada: 0
+  cortada: 0
+  empaque_final: 0
+  llenada_gel: 0
+  pin_soporte: 0
+  samblasted: 0
+
+otros_materiales:
+  mo_rubber: 0
+  numero_plotter: 0
+  perforada: 0
+  guillotina: 0
+
+produccion:
+  armada: 0
+  valor_por_troquelada: 0
+
+porcentajes:
+  cif:
+    - 8
+    - 10
+    - 15
+  admon: 5
+  utilidad:
+    - 45
+    - 28
+    - 17
+    - 11
