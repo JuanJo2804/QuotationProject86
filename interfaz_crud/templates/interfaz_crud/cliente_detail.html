@@ -1,0 +1,91 @@
+<!-- Plantilla: Detalle de un cliente individual. Extiende la plantilla base del proyecto -->
+{% extends 'base.html' %}
+
+{% block title %}Detalles del Cliente{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-8">
+        <h2>Detalles del Cliente</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'editar_cliente' cliente.pk %}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Editar
+        </a>
+        <a href="{% url 'eliminar_cliente' cliente.pk %}" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Eliminar
+        </a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Información del Cliente</h5>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
+                <p><strong>Correo:</strong> {{ cliente.correo }}</p>
+                <p><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Dirección:</strong> {{ cliente.direccion }}</p>
+                <p><strong>Fecha de Registro:</strong> {{ cliente.fecha_registro|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title">Cotizaciones del Cliente</h5>
+            <a href="{% url 'crear_cotizacion' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nueva Cotización
+            </a>
+        </div>
+        
+        {% if cotizaciones %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cotizacion in cotizaciones %}
+                    <tr>
+                        <td>{{ cotizacion.fecha_creacion|date:"d/m/Y" }}</td>
+                        <td>{{ cotizacion.descripcion }}</td>
+                        <td>${{ cotizacion.total|floatformat:2 }}</td>
+                        <td>
+                            <a href="{% url 'detalle_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'editar_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'eliminar_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">Este cliente aún no tiene cotizaciones.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'lista_clientes' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver a la lista
+    </a>
+</div>
+{% endblock %}
