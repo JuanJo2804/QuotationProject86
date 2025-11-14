@@ -19,8 +19,13 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # URLs de la API (migradas a interfaz_crud)
+
+    # App principal de quotations (solo home si es necesario)
+    path('', include('quotations.urls')),
+
+    # App de interfaz CRUD (gestión completa)
+    path('crud/', include('interfaz_crud.urls')),
+
+    # API REST
     path('api/', include('interfaz_crud.urls_api')),
-    path('', include('interfaz_crud.urls')),   # URLs de la interfaz
-    path('', include('quotations.urls')),  # URLs del módulo de cotizaciones
 ]

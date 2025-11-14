@@ -7,8 +7,8 @@ from .business_logic.quotation_processor import QuotationProcessor
 
 
 def inicio(request):
-    """Vista de inicio/home"""
-    return HttpResponse("bienvenido a la pagina principal")
+    """Vista de inicio/home con plantilla HTML"""
+    return render(request, 'interfaz_crud/inicio.html')
 
 
 def cotizacion(request):
