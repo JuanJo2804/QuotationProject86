@@ -45,6 +45,9 @@ package-lock.json
 # /static/
 staticfiles/
 
+# Tailwind CSS compiled output
+static/css/output.css
+
 # Coverage reports
 htmlcov/
 .coverage

@@ -15,10 +15,10 @@
                 <div class="card-body">
                     <h5 class="card-title">Gestión de Clientes</h5>
                     <p class="card-text">Administra la información de tus clientes.</p>
-                    <a href="{% url 'lista_clientes' %}" class="btn btn-primary">
+                    <a href="{% url 'interfaz_crud:lista_clientes' %}" class="btn btn-primary">
                         <i class="fas fa-users"></i> Ver Clientes
                     </a>
-                    <a href="{% url 'crear_cliente' %}" class="btn btn-success">
+                    <a href="{% url 'interfaz_crud:crear_cliente' %}" class="btn btn-success">
                         <i class="fas fa-user-plus"></i> Nuevo Cliente
                     </a>
                 </div>
@@ -28,12 +28,9 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">Gestión de Cotizaciones</h5>
-                    <p class="card-text">Crea y administra cotizaciones para tus clientes.</p>
-                    <a href="{% url 'lista_cotizaciones' %}" class="btn btn-primary">
-                        <i class="fas fa-file-invoice"></i> Ver Cotizaciones
-                    </a>
-                    <a href="{% url 'crear_cotizacion' %}" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Nueva Cotización
+                    <p class="card-text">Calcula cotizaciones para tus clientes con nuestra herramienta avanzada.</p>
+                    <a href="{% url 'interfaz_crud:cotizacion_calcular' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-calculator"></i> Calcular Cotización
                     </a>
                 </div>
             </div>

@@ -1,13 +1,17 @@
 """Vistas web (HTML) para la app `interfaz_crud`."""
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib import messages
 from django.db.models import Q
 from .models import Cliente, Cotizacion
 from .forms import ClienteForm, CotizacionForm
+
+# Importar desde quotations
+from quotations.forms.quotation_form import QuotationForm
+from quotations.business_logic.quotation_processor import QuotationProcessor
 
 
 def inicio(request):
@@ -62,7 +66,7 @@ class EliminarCliente(DeleteView):
     model = Cliente
     template_name = 'interfaz_crud/cliente_confirm_delete.html'
     success_url = reverse_lazy('lista_clientes')
-    
+
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Cliente eliminado exitosamente.')
         return super().delete(request, *args, **kwargs)
@@ -134,3 +138,34 @@ class DetalleCotizacion(DetailView):
     model = Cotizacion
     template_name = 'interfaz_crud/cotizacion_detail.html'
     context_object_name = 'cotizacion'
+
+
+def cotizacion_calcular(request):
+    """
+    Vista de cotización con cálculos avanzados.
+    Utiliza la lógica de negocio de la app quotations.
+    """
+    resultado = None
+    form = QuotationForm()
+
+    if request.method == 'POST':
+        form = QuotationForm(request.POST)
+
+        if form.is_valid():
+            # Obtener datos del formulario
+            datos = form.get_datos_cotizacion()
+
+            # Procesar cotización
+            processor = QuotationProcessor()
+            resultado = processor.calcular_cotizacion(datos)
+
+            # Si se pidió JSON response (para AJAX)
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse(resultado)
+
+    context = {
+        'form': form,
+        'resultado': resultado
+    }
+
+    return render(request, 'interfaz_crud/cotizacion_calcular.html', context)
