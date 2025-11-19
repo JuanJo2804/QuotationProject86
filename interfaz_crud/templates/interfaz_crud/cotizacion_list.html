@@ -9,7 +9,7 @@
         <h2>Lista de Cotizaciones</h2>
     </div>
     <div class="col-md-4 text-end">
-        <a href="{% url 'crear_cotizacion' %}" class="btn btn-primary">
+        <a href="{% url 'interfaz_crud:crear_cotizacion' %}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Nueva Cotización
         </a>
     </div>
@@ -43,25 +43,25 @@
             {% for cotizacion in cotizaciones %}
             <tr>
                 <td>
-                    <a href="{% url 'detalle_cliente' cotizacion.cliente.pk %}" class="text-decoration-none">
+                    <a href="{% url 'interfaz_crud:detalle_cliente' cotizacion.cliente.pk %}" class="text-decoration-none">
                         {{ cotizacion.cliente.nombre }}
                     </a>
                 </td>
                 <td>
-                    <a href="{% url 'detalle_cotizacion' cotizacion.pk %}" class="text-decoration-none">
+                    <a href="{% url 'interfaz_crud:detalle_cotizacion' cotizacion.pk %}" class="text-decoration-none">
                         {{ cotizacion.descripcion }}
                     </a>
                 </td>
                 <td>{{ cotizacion.fecha_creacion|date:"d/m/Y" }}</td>
                 <td>${{ cotizacion.total|floatformat:2 }}</td>
                 <td>
-                    <a href="{% url 'detalle_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-info" title="Ver detalles">
+                    <a href="{% url 'interfaz_crud:detalle_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-info" title="Ver detalles">
                         <i class="fas fa-eye"></i>
                     </a>
-                    <a href="{% url 'editar_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-warning" title="Editar">
+                    <a href="{% url 'interfaz_crud:editar_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-warning" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <a href="{% url 'eliminar_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-danger" title="Eliminar">
+                    <a href="{% url 'interfaz_crud:eliminar_cotizacion' cotizacion.pk %}" class="btn btn-sm btn-danger" title="Eliminar">
                         <i class="fas fa-trash"></i>
                     </a>
                 </td>

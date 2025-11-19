@@ -1,7 +1,8 @@
 """Serializers para la API en `interfaz_crud`."""
 
 from rest_framework import serializers
-from .models import Cliente, Cotizacion
+from .models import Cliente
+from quotations.models import Quotation
 
 
 class ClienteSerializer(serializers.ModelSerializer):
@@ -11,17 +12,19 @@ class ClienteSerializer(serializers.ModelSerializer):
       - id
       - nombre
       - correo
+      - telefono
+      - direccion
       - fecha_registro (solo lectura)
     """
 
     class Meta:
         model = Cliente
-        fields = ['id', 'nombre', 'correo', 'fecha_registro']
+        fields = ['id', 'nombre', 'correo', 'telefono', 'direccion', 'fecha_registro']
         read_only_fields = ['fecha_registro']
 
 
-class CotizacionSerializer(serializers.ModelSerializer):
-    """Convierte instancias de `Cotizacion` a/desde JSON.
+class QuotationSerializer(serializers.ModelSerializer):
+    """Convierte instancias de `Quotation` a/desde JSON.
 
     Añade `nombre_cliente` (solo lectura) para facilitar respuestas legibles.
     """
@@ -29,6 +32,9 @@ class CotizacionSerializer(serializers.ModelSerializer):
     nombre_cliente = serializers.CharField(source='cliente.nombre', read_only=True)
 
     class Meta:
-        model = Cotizacion
-        fields = ['id', 'cliente', 'nombre_cliente', 'fecha_creacion', 'total', 'descripcion']
-        read_only_fields = ['fecha_creacion']
+        model = Quotation
+        fields = [
+            'id', 'cliente', 'nombre_cliente', 'fecha_creacion', 'fecha_modificacion',
+            'ancho_cm', 'alto_cm', 'cantidad', 'costo_total', 'precio_utilidad_28'
+        ]
+        read_only_fields = ['fecha_creacion', 'fecha_modificacion']

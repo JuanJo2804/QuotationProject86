@@ -3,6 +3,7 @@ Formularios para la aplicación de cotizaciones
 """
 
 from django import forms
+from interfaz_crud.models import Cliente
 
 
 class QuotationForm(forms.Form):
@@ -10,15 +11,16 @@ class QuotationForm(forms.Form):
     Formulario para recibir datos de cotización desde el frontend.
     """
 
-    # Información del cliente
-    nombre_cliente = forms.CharField(
-        label='Nombre del Cliente',
-        max_length=200,
+    # Información del cliente - selector de clientes existentes
+    cliente = forms.ModelChoiceField(
+        label='Cliente',
+        queryset=Cliente.objects.all().order_by('nombre'),
         required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-            'placeholder': 'Ingrese el nombre del cliente'
-        })
+        empty_label="Seleccione un cliente",
+        widget=forms.Select(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+        }),
+        help_text='Seleccione el cliente de la lista. Si no existe, créelo primero en el módulo de Clientes.'
     )
 
     # Dimensiones de la marquilla
@@ -245,11 +247,12 @@ class QuotationForm(forms.Form):
         Convierte los datos del formulario al formato esperado por QuotationProcessor.
 
         Returns:
-            dict: Datos formateados para calcular_cotizacion()
+            dict: Datos formateados para calcular_cotizacion() incluyendo el cliente
         """
         cleaned_data = self.cleaned_data
 
         return {
+            'cliente': cleaned_data['cliente'],  # Instancia del modelo Cliente
             'ancho_cm': float(cleaned_data['ancho_cm']),
             'alto_cm': float(cleaned_data['alto_cm']),
             'espacio_entre_cm': float(cleaned_data['espacio_entre_cm']),

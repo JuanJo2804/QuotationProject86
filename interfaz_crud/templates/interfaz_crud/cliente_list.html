@@ -9,7 +9,7 @@
         <h2>Lista de Clientes</h2>
     </div>
     <div class="col-md-4 text-end">
-        <a href="{% url 'crear_cliente' %}" class="btn btn-primary">
+        <a href="{% url 'interfaz_crud:crear_cliente' %}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Nuevo Cliente
         </a>
     </div>
@@ -43,7 +43,7 @@
             {% for cliente in clientes %}
             <tr>
                 <td>
-                    <a href="{% url 'detalle_cliente' cliente.pk %}" class="text-decoration-none">
+                    <a href="{% url 'interfaz_crud:detalle_cliente' cliente.pk %}" class="text-decoration-none">
                         {{ cliente.nombre }}
                     </a>
                 </td>
@@ -51,13 +51,13 @@
                 <td>{{ cliente.telefono }}</td>
                 <td>{{ cliente.fecha_registro|date:"d/m/Y" }}</td>
                 <td>
-                    <a href="{% url 'detalle_cliente' cliente.pk %}" class="btn btn-sm btn-info" title="Ver detalles">
+                    <a href="{% url 'interfaz_crud:detalle_cliente' cliente.pk %}" class="btn btn-sm btn-info" title="Ver detalles">
                         <i class="fas fa-eye"></i>
                     </a>
-                    <a href="{% url 'editar_cliente' cliente.pk %}" class="btn btn-sm btn-warning" title="Editar">
+                    <a href="{% url 'interfaz_crud:editar_cliente' cliente.pk %}" class="btn btn-sm btn-warning" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <a href="{% url 'eliminar_cliente' cliente.pk %}" class="btn btn-sm btn-danger" title="Eliminar">
+                    <a href="{% url 'interfaz_crud:eliminar_cliente' cliente.pk %}" class="btn btn-sm btn-danger" title="Eliminar">
                         <i class="fas fa-trash"></i>
                     </a>
                 </td>
