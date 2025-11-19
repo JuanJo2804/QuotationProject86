@@ -10,7 +10,7 @@ from . import api
 
 router = DefaultRouter()
 router.register(r'clientes', api.ClienteViewSet)
-router.register(r'cotizaciones', api.CotizacionViewSet)
+router.register(r'cotizaciones', api.QuotationViewSet)
 
 # NOTA: aquí usamos path('', include(...)) para evitar dobles prefijos
 urlpatterns = [

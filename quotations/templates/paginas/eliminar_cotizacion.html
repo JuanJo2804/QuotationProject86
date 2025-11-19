@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Cotización</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+        <!-- Card de confirmación -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <!-- Icono de advertencia -->
+            <div class="flex justify-center mb-6">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Título -->
+            <h2 class="text-2xl font-bold text-gray-900 text-center mb-4">
+                ¿Eliminar cotización?
+            </h2>
+
+            <!-- Descripción -->
+            <p class="text-gray-600 text-center mb-6">
+                Esta acción no se puede deshacer. Se eliminará permanentemente la cotización del cliente 
+                <span class="font-semibold text-gray-900">{{ cotizacion.cliente.nombre }}</span>.
+            </p>
+
+            <!-- Detalles de la cotización -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Cliente:</span>
+                    <span class="font-medium text-gray-900">{{ cotizacion.cliente.nombre }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Dimensiones:</span>
+                    <span class="font-medium text-gray-900">{{ cotizacion.ancho_cm }} × {{ cotizacion.alto_cm }} cm</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Cantidad:</span>
+                    <span class="font-medium text-gray-900">{{ cotizacion.cantidad }} unidades</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Costo Total:</span>
+                    <span class="font-bold text-gray-900">${{ cotizacion.costo_total|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Fecha:</span>
+                    <span class="font-medium text-gray-900">{{ cotizacion.fecha_creacion|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <form method="POST">
+                {% csrf_token %}
+                <div class="flex space-x-3">
+                    <a href="{% url 'quotations:lista_cotizaciones' %}" 
+                       class="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-center font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
+                        Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Botón para volver -->
+        <div class="text-center mt-4">
+            <a href="{% url 'quotations:lista_cotizaciones' %}" 
+               class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                ← Volver a la lista
+            </a>
+        </div>
+    </div>
+</body>
+</html>

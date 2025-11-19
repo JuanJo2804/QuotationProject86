@@ -6,12 +6,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib import messages
 from django.db.models import Q
-from .models import Cliente, Cotizacion
-from .forms import ClienteForm, CotizacionForm
-
-# Importar desde quotations
-from quotations.forms.quotation_form import QuotationForm
-from quotations.business_logic.quotation_processor import QuotationProcessor
+from .models import Cliente
+from .forms import ClienteForm
 
 
 def inicio(request):
@@ -44,7 +40,7 @@ class CrearCliente(CreateView):
     model = Cliente
     form_class = ClienteForm
     template_name = 'interfaz_crud/cliente_form.html'
-    success_url = reverse_lazy('lista_clientes')
+    success_url = reverse_lazy('interfaz_crud:lista_clientes')
 
     def form_valid(self, form):
         messages.success(self.request, 'Cliente creado exitosamente.')
@@ -55,7 +51,7 @@ class EditarCliente(UpdateView):
     model = Cliente
     form_class = ClienteForm
     template_name = 'interfaz_crud/cliente_form.html'
-    success_url = reverse_lazy('lista_clientes')
+    success_url = reverse_lazy('interfaz_crud:lista_clientes')
 
     def form_valid(self, form):
         messages.success(self.request, 'Cliente actualizado exitosamente.')
@@ -65,7 +61,7 @@ class EditarCliente(UpdateView):
 class EliminarCliente(DeleteView):
     model = Cliente
     template_name = 'interfaz_crud/cliente_confirm_delete.html'
-    success_url = reverse_lazy('lista_clientes')
+    success_url = reverse_lazy('interfaz_crud:lista_clientes')
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Cliente eliminado exitosamente.')
@@ -79,93 +75,10 @@ class DetalleCliente(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cotizaciones'] = self.object.cotizaciones.all()
+        # Obtener cotizaciones del modelo Quotation en la app quotations
+        from quotations.models import Quotation
+        context['cotizaciones'] = Quotation.objects.filter(cliente=self.object)
         return context
 
 
-# Vistas para Cotizaciones
-class ListaCotizaciones(ListView):
-    model = Cotizacion
-    template_name = 'interfaz_crud/cotizacion_list.html'
-    context_object_name = 'cotizaciones'
-    paginate_by = 10
-    ordering = ['-fecha_creacion']
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        q = self.request.GET.get('q')
-        if q:
-            queryset = queryset.filter(
-                Q(cliente__nombre__icontains=q) |
-                Q(descripcion__icontains=q)
-            )
-        return queryset
-
-
-class CrearCotizacion(CreateView):
-    model = Cotizacion
-    form_class = CotizacionForm
-    template_name = 'interfaz_crud/cotizacion_form.html'
-    success_url = reverse_lazy('lista_cotizaciones')
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Cotización creada exitosamente.')
-        return super().form_valid(form)
-
-
-class EditarCotizacion(UpdateView):
-    model = Cotizacion
-    form_class = CotizacionForm
-    template_name = 'interfaz_crud/cotizacion_form.html'
-    success_url = reverse_lazy('lista_cotizaciones')
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Cotización actualizada exitosamente.')
-        return super().form_valid(form)
-
-
-class EliminarCotizacion(DeleteView):
-    model = Cotizacion
-    template_name = 'interfaz_crud/cotizacion_confirm_delete.html'
-    success_url = reverse_lazy('lista_cotizaciones')
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, 'Cotización eliminada exitosamente.')
-        return super().delete(request, *args, **kwargs)
-
-
-class DetalleCotizacion(DetailView):
-    model = Cotizacion
-    template_name = 'interfaz_crud/cotizacion_detail.html'
-    context_object_name = 'cotizacion'
-
-
-def cotizacion_calcular(request):
-    """
-    Vista de cotización con cálculos avanzados.
-    Utiliza la lógica de negocio de la app quotations.
-    """
-    resultado = None
-    form = QuotationForm()
-
-    if request.method == 'POST':
-        form = QuotationForm(request.POST)
-
-        if form.is_valid():
-            # Obtener datos del formulario
-            datos = form.get_datos_cotizacion()
-
-            # Procesar cotización
-            processor = QuotationProcessor()
-            resultado = processor.calcular_cotizacion(datos)
-
-            # Si se pidió JSON response (para AJAX)
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse(resultado)
-
-    context = {
-        'form': form,
-        'resultado': resultado
-    }
-
-    return render(request, 'interfaz_crud/cotizacion_calcular.html', context)

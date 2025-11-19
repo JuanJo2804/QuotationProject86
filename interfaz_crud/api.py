@@ -1,26 +1,25 @@
 """interfaz_crud.api
 ---------------------
 Aquí se definen los ViewSets de la API para clientes y cotizaciones.
-Usamos los modelos que permanecen en la app `quotations` para no romper
-las migraciones actuales. Los serializers están en `interfaz_crud.serializers`.
 
 Endpoints expuestos (registrados en `urls_api.py`):
  - /api/clientes/      -> ClienteViewSet (lista, crear, actualizar, eliminar)
- - /api/cotizaciones/  -> CotizacionViewSet
+ - /api/cotizaciones/  -> QuotationViewSet (usa el modelo Quotation de quotations app)
 
 Cada ViewSet usa SearchFilter para permitir búsquedas simples por nombre,
 correo o descripción.
 """
 
 from rest_framework import viewsets, filters
-from .models import Cliente, Cotizacion
-from .serializers import ClienteSerializer, CotizacionSerializer
+from .models import Cliente
+from quotations.models import Quotation
+from .serializers import ClienteSerializer, QuotationSerializer
 
 
 class ClienteViewSet(viewsets.ModelViewSet):
     """API para gestionar clientes.
 
-    Provee las operaciones CRUD sobre `quotations.models.Cliente` y utiliza
+    Provee las operaciones CRUD sobre `interfaz_crud.models.Cliente` y utiliza
     `interfaz_crud.serializers.ClienteSerializer` para convertir datos a/desde JSON.
     """
     queryset = Cliente.objects.all().order_by('-fecha_registro')
@@ -29,12 +28,12 @@ class ClienteViewSet(viewsets.ModelViewSet):
     search_fields = ['nombre', 'correo']
 
 
-class CotizacionViewSet(viewsets.ModelViewSet):
+class QuotationViewSet(viewsets.ModelViewSet):
     """API para gestionar cotizaciones.
 
-    Provee las operaciones CRUD sobre `quotations.models.Cotizacion`.
+    Provee las operaciones CRUD sobre `quotations.models.Quotation`.
     """
-    queryset = Cotizacion.objects.all().order_by('-fecha_creacion')
-    serializer_class = CotizacionSerializer
+    queryset = Quotation.objects.all().order_by('-fecha_creacion')
+    serializer_class = QuotationSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['cliente__nombre', 'descripcion']
+    search_fields = ['cliente__nombre']

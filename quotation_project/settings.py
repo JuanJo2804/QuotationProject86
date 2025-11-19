@@ -75,26 +75,25 @@ WSGI_APPLICATION = 'quotation_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# PostgreSQL configuration (commented for development)
+# SQLite configuration (commented for development)
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CRUD_QUOTATION',      
-#         'USER': 'postgres',
-#         'PASSWORD': 'tu_password_aqui',  # Agregar password
-#         'HOST': 'localhost',
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
 
-
+# PostgreSQL configuration
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'crud_quotation',
+        'USER': 'quotation_admin',
+        'PASSWORD': '123',  # Cambia esto por la contraseña que elegiste
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

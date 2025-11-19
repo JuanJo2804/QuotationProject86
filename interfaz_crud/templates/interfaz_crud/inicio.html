@@ -29,7 +29,10 @@
                 <div class="card-body">
                     <h5 class="card-title">Gestión de Cotizaciones</h5>
                     <p class="card-text">Calcula cotizaciones para tus clientes con nuestra herramienta avanzada.</p>
-                    <a href="{% url 'interfaz_crud:cotizacion_calcular' %}" class="btn btn-success btn-lg">
+                    <a href="{% url 'quotations:lista_cotizaciones' %}" class="btn btn-primary">
+                        <i class="fas fa-list"></i> Ver Cotizaciones
+                    </a>
+                    <a href="{% url 'quotations:cotizar' %}" class="btn btn-success">
                         <i class="fas fa-calculator"></i> Calcular Cotización
                     </a>
                 </div>
