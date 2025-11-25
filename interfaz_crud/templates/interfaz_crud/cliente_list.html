@@ -35,6 +35,7 @@
                 <th>Nombre</th>
                 <th>Correo</th>
                 <th>Teléfono</th>
+                <th>Descripción</th> <!-- Nueva columna para la descripción -->
                 <th>Fecha Registro</th>
                 <th>Acciones</th>
             </tr>
@@ -49,6 +50,7 @@
                 </td>
                 <td>{{ cliente.correo }}</td>
                 <td>{{ cliente.telefono }}</td>
+                <td>{{ cliente.descripcion|default:"N/A" }}</td> <!-- Mostrar descripción -->
                 <td>{{ cliente.fecha_registro|date:"d/m/Y" }}</td>
                 <td>
                     <a href="{% url 'interfaz_crud:detalle_cliente' cliente.pk %}" class="btn btn-sm btn-info" title="Ver detalles">
