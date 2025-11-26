@@ -5,20 +5,7 @@
 
 {% block extra_css %}
 <style>
-    .tab-button {
-        transition: all 0.3s ease;
-    }
-    .tab-button.active {
-        border-bottom: 2px solid #3b82f6;
-        color: #3b82f6;
-        font-weight: 600;
-    }
-    .tab-content {
-        display: none;
-    }
-    .tab-content.active {
-        display: block;
-    }
+
     .field-required::after {
         content: " *";
         color: #ef4444;
@@ -41,33 +28,14 @@
             <p class="text-sm text-gray-500">Gestión de cotizaciones para impresión y troquelado</p>
         </div>
 
-        <!-- Tabs de Navegación -->
-        <div class="bg-white rounded-lg shadow-sm mb-6">
-            <div class="border-b border-gray-200">
-                <nav class="flex space-x-8 px-6" role="tablist">
-                    <button type="button" 
-                            class="tab-button active py-4 text-sm font-medium text-gray-600 hover:text-blue-600"
-                            onclick="switchTab('cotizacion')"
-                            data-tab="cotizacion">
-                        Nueva Cotización
-                    </button>
-                    <button type="button" 
-                            class="tab-button py-4 text-sm font-medium text-gray-600 hover:text-blue-600"
-                            onclick="switchTab('historial')"
-                            data-tab="historial">
-                        Historial (0)
-                    </button>
-                </nav>
-            </div>
-        </div>
 
-        <!-- Contenido de Tabs -->
+
+        <!-- Contenido Principal -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- Panel Izquierdo - Formulario -->
             <div class="lg:col-span-2">
-                <div id="cotizacion-tab" class="tab-content active">
-                    <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-lg font-semibold text-gray-800">Datos de la Cotización</h2>
                         </div>
@@ -310,20 +278,6 @@
                             </div>
                         </form>
                     </div>
-                </div>
-
-                <!-- Tab de Historial -->
-                <div id="historial-tab" class="tab-content">
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">No hay cotizaciones guardadas</h3>
-                            <p class="mt-1 text-sm text-gray-500">Crea tu primera cotización para verla aquí</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Panel Derecho - Resultados -->
@@ -439,28 +393,21 @@
                             <p class="text-xs text-gray-400">Complete los campos para ver el cálculo</p>
                         </div>
                     {% endif %}
+                    
+                    <!-- Botón Ver Cotizaciones -->
+                    <div class="mt-6 pt-6 border-t">
+                        <a href="{% url 'quotations:lista_cotizaciones' %}" 
+                           class="w-full inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition transform hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Ver Cotizaciones Creadas
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function switchTab(tabName) {
-            // Ocultar todos los tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remover active de todos los botones
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Mostrar el tab seleccionado
-            document.getElementById(tabName + '-tab').classList.add('active');
-            
-            // Activar el botón correspondiente
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-        }
-    </script>
+
 {% endblock %}
