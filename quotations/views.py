@@ -206,13 +206,13 @@ def cotizacion(request, cotizacion_id=None):
             # Si se pidió JSON response (para AJAX)
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse(resultado)
+            # NOTA: La generación y descarga del PDF solo debe ejecutarse cuando el usuario
+            # guarde o cree explícitamente la cotización (esto se maneja en la rama de
+            # 'guardar' más arriba). Para solicitudes que solo son de cálculo (por ejemplo,
+            # cuando se presiona "Calcular"), NO debemos generar un PDF y debemos simplemente
+            # renderizar la plantilla (o devolver JSON si es por AJAX). Esto evita que la
+            # generación del PDF interfiera con la respuesta JSON o con el flujo normal de renderizado.
 
-            # NOTE: PDF generation and download will only run when the user
-            # explicitly saves/creates the cotización (handled in the 'guardar'
-            # branch above). For calculation-only requests (e.g. pressing
-            # "Calcular"), we must NOT generate a PDF and should instead
-            # render the template (or return JSON for AJAX). This prevents
-            # interfering with the JSON response or the normal render flow.
 
     context = {
         'form': form,
