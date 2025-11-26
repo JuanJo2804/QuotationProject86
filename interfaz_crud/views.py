@@ -89,17 +89,4 @@ class EliminarCliente(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class DetalleCliente(DetailView):
-    model = Cliente
-    template_name = 'interfaz_crud/cliente_detail.html'
-    context_object_name = 'cliente'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Obtener cotizaciones del modelo Quotation en la app quotations
-        from quotations.models import Quotation
-        context['cotizaciones'] = Quotation.objects.filter(cliente=self.object)
-        return context
-
-
 

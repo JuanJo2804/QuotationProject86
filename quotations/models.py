@@ -294,7 +294,8 @@ class Quotation(models.Model):
     # ========== METADATOS ==========
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
-        ('finalizado', 'Finalizado'),
+        ('enviada', 'Enviada'),
+        ('aprobada', 'Aprobada'),
     ]
     
     estado = models.CharField(
