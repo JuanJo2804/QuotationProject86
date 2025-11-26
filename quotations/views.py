@@ -7,6 +7,7 @@ from django.utils import timezone
 from .forms.quotation_form import QuotationForm
 from .business_logic.quotation_processor import QuotationProcessor
 from .models import Quotation
+from Filterss.quotation_filter_form import QuotationFilterForm # Importamos desde la nueva ubicación
 
 # Create your views here.
 
@@ -17,10 +18,27 @@ def inicio(request):
 
 
 def lista_cotizaciones(request):
-    """Vista de lista de cotizaciones con filtros"""
+    """Vista de lista de cotizaciones con filtros avanzados"""
     cotizaciones = Quotation.objects.select_related('cliente').all()
     
-    # Filtro por búsqueda de cliente
+    filter_form = QuotationFilterForm(request.GET)
+    if filter_form.is_valid():
+        client_name = filter_form.cleaned_data.get('client_name')
+        product_name = filter_form.cleaned_data.get('product_name')
+        start_date = filter_form.cleaned_data.get('start_date')
+        end_date = filter_form.cleaned_data.get('end_date')
+
+        if client_name:
+            cotizaciones = cotizaciones.filter(cliente__nombre__icontains=client_name)
+        if product_name:
+            # Asumiendo que el nombre del producto está en algún campo de Quotation o un relacionado
+            cotizaciones = cotizaciones.filter(Q(medida__icontains=product_name) | Q(espesor__icontains=product_name)) # Placeholder
+        if start_date:
+            cotizaciones = cotizaciones.filter(fecha_creacion__date__gte=start_date)
+        if end_date:
+            cotizaciones = cotizaciones.filter(fecha_creacion__date__lte=end_date)
+            
+    # Filtro por búsqueda de cliente (mantengo la lógica existente por si se usa de forma adicional)
     buscar = request.GET.get('buscar', '')
     if buscar:
         cotizaciones = cotizaciones.filter(
@@ -28,7 +46,7 @@ def lista_cotizaciones(request):
             Q(cliente__correo__icontains=buscar)
         )
     
-    # Filtro por período (fecha)
+    # Filtro por período (fecha) (mantengo la lógica existente)
     periodo = request.GET.get('periodo', '')
     if periodo:
         hoy = timezone.now()
@@ -48,6 +66,7 @@ def lista_cotizaciones(request):
     
     context = {
         'cotizaciones': cotizaciones,
+        'filter_form': filter_form,
         'buscar': buscar,
         'periodo': periodo,
     }

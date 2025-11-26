@@ -1,0 +1,39 @@
+Documentación del Módulo 'Filterss' - Filtro de Cotizaciones
+
+Fecha de Documentación: 25/11/2025
+
+Este documento detalla la implementación del módulo 'Filterss', específicamente la creación y funcionalidad del formulario de filtrado de cotizaciones.
+
+**1. Módulo 'Filterss'**
+
+    *   **Propósito:** El módulo `Filterss` fue creado para proporcionar una interfaz y lógica para filtrar cotizaciones basadas en criterios específicos.
+    *   **Ubicación:** `QuotationProject86/Filterss/`
+
+**2. Archivo `quotation_filter_form.py`**
+
+    *   **Descripción:** Este archivo contiene la definición del formulario `QuotationFilterForm`, que es una clase de formulario de Django (`forms.Form`) utilizada para la entrada de criterios de filtrado.
+
+    *   **Contenido:**
+        ```python
+        from django import forms
+
+        class QuotationFilterForm(forms.Form):
+            start_date = forms.DateField(label='Fecha Creación', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+        ```
+
+    *   **Funcionalidad Implementada:**
+        *   Se definió la clase `QuotationFilterForm` que hereda de `forms.Form` de Django.
+        *   Se añadió un campo `start_date` (fecha de inicio) para filtrar cotizaciones.
+            *   `label='Fecha Creación'`: Etiqueta visible para el usuario.
+            *   `required=False`: El campo es opcional, lo que permite buscar cotizaciones sin especificar una fecha de inicio.
+            *   `widget=forms.DateInput(attrs={'type': 'date'})`: Utiliza un widget de entrada de fecha HTML5, lo que mejora la experiencia del usuario con un selector de fecha nativo en navegadores compatibles.
+
+    *   **Uso (Contexto Inferido):**
+        Este formulario se utiliza en una vista (probablemente en la aplicación `quotations`) para permitir a los usuarios introducir una fecha de creación. Luego, esta fecha se utiliza para consultar y mostrar un subconjunto de cotizaciones que cumplen con el criterio de filtrado, por ejemplo, cotizaciones creadas a partir de esa fecha.
+
+**3. Cambios Generales Relacionados con la Implementación de Filtros (Contribución de Cline):**
+
+    *   Cline ayudó a identificar la necesidad de un módulo de filtrado y propuso la estructura inicial para `quotation_filter_form.py`.
+    *   La implementación del campo `start_date` dentro de `QuotationFilterForm` fue parte de la solución para permitir el filtrado por fecha.
+
+Esta documentación se centra exclusivamente en el módulo `Filterss` y la funcionalidad de filtrado implementada, tal como se solicitó.
