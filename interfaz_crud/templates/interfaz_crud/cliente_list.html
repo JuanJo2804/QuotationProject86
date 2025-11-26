@@ -35,7 +35,6 @@
                 <th>Nombre</th>
                 <th>Correo</th>
                 <th>Teléfono</th>
-                <th>Descripción</th> <!-- Nueva columna para la descripción -->
                 <th>Fecha Registro</th>
                 <th>Acciones</th>
             </tr>
@@ -43,19 +42,11 @@
         <tbody>
             {% for cliente in clientes %}
             <tr>
-                <td>
-                    <a href="{% url 'interfaz_crud:detalle_cliente' cliente.pk %}" class="text-decoration-none">
-                        {{ cliente.nombre }}
-                    </a>
-                </td>
+                <td>{{ cliente.nombre }}</td>
                 <td>{{ cliente.correo }}</td>
                 <td>{{ cliente.telefono }}</td>
-                <td>{{ cliente.descripcion|default:"N/A" }}</td> <!-- Mostrar descripción -->
                 <td>{{ cliente.fecha_registro|date:"d/m/Y" }}</td>
                 <td>
-                    <a href="{% url 'interfaz_crud:detalle_cliente' cliente.pk %}" class="btn btn-sm btn-info" title="Ver detalles">
-                        <i class="fas fa-eye"></i>
-                    </a>
                     <a href="{% url 'interfaz_crud:editar_cliente' cliente.pk %}" class="btn btn-sm btn-warning" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>

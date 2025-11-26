@@ -87,9 +87,9 @@ WSGI_APPLICATION = 'quotation_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Crud_QuotationDB',
-        'USER': 'postgres',
-        'PASSWORD': '',  # Cambia esto por la contraseña que elegiste
+        'NAME': 'crud_quotation',
+        'USER': 'quotation_admin',
+        'PASSWORD': '123',  # Cambia esto por la contraseña que elegiste
         'HOST': 'localhost',
         'PORT': '5432',
     }
