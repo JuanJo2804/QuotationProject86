@@ -1,43 +1,252 @@
-<!-- Plantilla: Página de inicio de la interfaz. Extiende la plantilla base del proyecto -->
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Inicio - Sistema de Cotizaciones{% endblock %}
+{% block title %}Inicio - QuickQuote{% endblock %}
+
+{% block extra_css %}
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .delay-100 { animation-delay: 0.1s; opacity: 0; }
+    .delay-200 { animation-delay: 0.2s; opacity: 0; }
+    .delay-300 { animation-delay: 0.3s; opacity: 0; }
+    .delay-400 { animation-delay: 0.4s; opacity: 0; }
+
+    .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-card {
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: scale(1.05);
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="jumbotron">
-    <h1 class="display-4">Sistema de Cotizaciones</h1>
-    <p class="lead">Bienvenido al sistema de gestión de clientes y cotizaciones.</p>
-    <hr class="my-4">
-    <p>¿Qué deseas hacer?</p>
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Gestión de Clientes</h5>
-                    <p class="card-text">Administra la información de tus clientes.</p>
-                    <a href="{% url 'interfaz_crud:lista_clientes' %}" class="btn btn-primary">
-                        <i class="fas fa-users"></i> Ver Clientes
+<!-- Hero Section -->
+<div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white -mx-4 -mt-4 mb-8">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="container mx-auto px-4 py-16 md:py-24 relative z-10">
+        <div class="text-center animate-fade-in-up">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                Bienvenido a <span class="text-yellow-300">QuickQuote</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-blue-100 animate-fade-in-up delay-100">
+                La forma más rápida y profesional de gestionar tus cotizaciones
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-200">
+                <a href="{% url 'quotations:cotizar' %}" class="inline-flex items-center px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg shadow-lg transform transition hover:scale-105">
+                    <i class="fas fa-calculator mr-2 text-xl"></i>
+                    <span>Crear Cotización</span>
+                </a>
+                <a href="{% url 'interfaz_crud:lista_clientes' %}" class="inline-flex items-center px-8 py-4 bg-white hover:bg-gray-100 text-blue-700 font-bold rounded-lg shadow-lg transform transition hover:scale-105">
+                    <i class="fas fa-users mr-2 text-xl"></i>
+                    <span>Ver Clientes</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Floating Icons -->
+        <div class="absolute top-10 left-10 text-white opacity-20 animate-float hidden lg:block">
+            <i class="fas fa-file-invoice-dollar text-6xl"></i>
+        </div>
+        <div class="absolute bottom-10 right-10 text-white opacity-20 animate-float hidden lg:block" style="animation-delay: 1s;">
+            <i class="fas fa-chart-line text-6xl"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container mx-auto px-4">
+    <!-- Stats Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in-up delay-300">
+        <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-semibold uppercase tracking-wide">Total Clientes</p>
+                    <p class="text-4xl font-bold mt-2">{{ total_clientes|default:"0" }}</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <img src="{% static 'images/profile.svg' %}" alt="Clientes" class="w-12 h-12">
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm font-semibold uppercase tracking-wide">Cotizaciones</p>
+                    <p class="text-4xl font-bold mt-2">{{ total_cotizaciones|default:"0" }}</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <img src="{% static 'images/quota.svg' %}" alt="Cotizaciones" class="w-12 h-12">
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-purple-100 text-sm font-semibold uppercase tracking-wide">Este Mes</p>
+                    <p class="text-4xl font-bold mt-2">{{ cotizaciones_mes|default:"0" }}</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <img src="{% static 'images/date.svg' %}" alt="Este Mes" class="w-12 h-12">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <!-- Clientes Card -->
+        <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in-up delay-400">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
+                <div class="flex items-center justify-center">
+                    <h2 class="text-2xl font-bold text-white">Gestión de Clientes</h2>
+                </div>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-600 mb-6 text-lg">
+                    Administra tu base de datos de clientes de forma eficiente. Añade, edita y consulta información de tus clientes en un solo lugar.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'interfaz_crud:lista_clientes' %}" class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition transform hover:scale-105">
+                        <i class="fas fa-list mr-2"></i>
+                        Ver Clientes
                     </a>
-                    <a href="{% url 'interfaz_crud:crear_cliente' %}" class="btn btn-success">
-                        <i class="fas fa-user-plus"></i> Nuevo Cliente
+                    <a href="{% url 'interfaz_crud:crear_cliente' %}" class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition transform hover:scale-105">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Nuevo Cliente
                     </a>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Gestión de Cotizaciones</h5>
-                    <p class="card-text">Calcula cotizaciones para tus clientes con nuestra herramienta avanzada.</p>
-                    <a href="{% url 'quotations:lista_cotizaciones' %}" class="btn btn-primary">
-                        <i class="fas fa-list"></i> Ver Cotizaciones
+
+        <!-- Cotizaciones Card -->
+        <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in-up delay-400">
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-6">
+                <div class="flex items-center justify-center">
+                    <h2 class="text-2xl font-bold text-white">Gestión de Cotizaciones</h2>
+                </div>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-600 mb-6 text-lg">
+                    Crea cotizaciones profesionales al instante. Nuestra herramienta avanzada te ayuda a calcular precios precisos y generar documentos profesionales.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'quotations:lista_cotizaciones' %}" class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition transform hover:scale-105">
+                        <i class="fas fa-list mr-2"></i>
+                        Ver Cotizaciones
                     </a>
-                    <a href="{% url 'quotations:cotizar' %}" class="btn btn-success">
-                        <i class="fas fa-calculator"></i> Calcular Cotización
+                    <a href="{% url 'quotations:cotizar' %}" class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold rounded-lg transition transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-calculator mr-2"></i>
+                        Calcular Ahora
                     </a>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12 animate-fade-in-up delay-400">
+        <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">
+            ¿Por qué elegir <span class="gradient-text">QuickQuote</span>?
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="bg-blue-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 transform transition hover:scale-110">
+                    <i class="fas fa-bolt text-4xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-800">Rápido y Eficiente</h3>
+                <p class="text-gray-600">Crea cotizaciones en segundos con nuestra interfaz intuitiva</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 transform transition hover:scale-110">
+                    <i class="fas fa-shield-alt text-4xl text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-800">Seguro y Confiable</h3>
+                <p class="text-gray-600">Tus datos están protegidos con la mejor tecnología</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 transform transition hover:scale-110">
+                    <i class="fas fa-chart-line text-4xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-800">Análisis Avanzado</h3>
+                <p class="text-gray-600">Obtén insights valiosos sobre tu negocio</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-2xl p-8 text-center text-white mb-8 animate-fade-in-up delay-400">
+        <h2 class="text-3xl font-bold mb-4">¿Listo para optimizar tu proceso de cotización?</h2>
+        <p class="text-xl mb-6 text-blue-100">Comienza ahora y descubre cómo QuickQuote puede transformar tu negocio</p>
+        <a href="{% url 'quotations:cotizar' %}" class="inline-flex items-center px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg shadow-lg transform transition hover:scale-105">
+            <i class="fas fa-rocket mr-2 text-xl"></i>
+            <span>Crear Mi Primera Cotización</span>
+        </a>
     </div>
 </div>
 {% endblock %}

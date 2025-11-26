@@ -14,8 +14,29 @@ def inicio(request):
     """Vista de inicio de la interfaz web.
 
     Renderiza `templates/inicio.html` (ahora extiende `base.html` del proyecto).
+    Incluye estadísticas sobre clientes y cotizaciones.
     """
-    return render(request, 'interfaz_crud/inicio.html')
+    from quotations.models import Quotation
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Obtener estadísticas
+    total_clientes = Cliente.objects.count()
+    total_cotizaciones = Quotation.objects.count()
+    
+    # Cotizaciones del mes actual
+    inicio_mes = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    cotizaciones_mes = Quotation.objects.filter(
+        fecha_creacion__gte=inicio_mes
+    ).count()
+    
+    context = {
+        'total_clientes': total_clientes,
+        'total_cotizaciones': total_cotizaciones,
+        'cotizaciones_mes': cotizaciones_mes,
+    }
+    
+    return render(request, 'interfaz_crud/inicio.html', context)
 
 
 # Vistas para Clientes
