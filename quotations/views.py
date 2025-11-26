@@ -200,3 +200,21 @@ def eliminar_cotizacion(request, cotizacion_id):
         'cotizacion': cotizacion
     }
     return render(request, 'paginas/eliminar_cotizacion.html', context)
+
+
+def cambiar_estado(request, cotizacion_id):
+    """Vista para cambiar el estado de una cotización entre Pendiente y Finalizado"""
+    cotizacion = get_object_or_404(Quotation, id=cotizacion_id)
+    
+    if request.method == 'POST':
+        # Cambiar el estado
+        if cotizacion.estado == 'pendiente':
+            cotizacion.estado = 'finalizado'
+            messages.success(request, f'✅ Cotización marcada como Finalizada para {cotizacion.cliente.nombre}')
+        else:
+            cotizacion.estado = 'pendiente'
+            messages.success(request, f'✅ Cotización marcada como Pendiente para {cotizacion.cliente.nombre}')
+        
+        cotizacion.save()
+    
+    return redirect('quotations:lista_cotizaciones')
