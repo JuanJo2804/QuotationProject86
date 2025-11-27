@@ -16,8 +16,6 @@ urlpatterns = [
     # URLs para Clientes
     path('clientes/', views.ListaClientes.as_view(), name='lista_clientes'),
     path('clientes/nuevo/', views.CrearCliente.as_view(), name='crear_cliente'),
-    path('clientes/<int:pk>/', views.DetalleCliente.as_view(),
-         name='detalle_cliente'),
     path('clientes/<int:pk>/editar/',
          views.EditarCliente.as_view(), name='editar_cliente'),
     path('clientes/<int:pk>/eliminar/',

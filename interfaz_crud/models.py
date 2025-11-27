@@ -27,6 +27,12 @@ class Cliente(models.Model):
         blank=True,
         help_text="Dirección física del cliente (opcional)"
     )
+    descripcion = models.TextField(
+        "Descripción",
+        null=True,
+        blank=True,
+        help_text="Notas o descripción adicional del cliente (opcional)"
+    )
     fecha_registro = models.DateTimeField(
         "Fecha de registro",
         auto_now_add=True,

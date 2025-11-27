@@ -8,7 +8,7 @@ from django.utils import timezone
 from .forms.quotation_form import QuotationForm
 from .business_logic.quotation_processor import QuotationProcessor
 from .models import Quotation
-from .utils.pdf_generator import generar_pdf_cotizacion
+from Filterss.quotation_filter_form import QuotationFilterForm # Importamos desde la nueva ubicación
 
 # Create your views here.
 
@@ -30,28 +30,23 @@ def lista_cotizaciones(request):
             Q(cliente__correo__icontains=buscar)
         )
     
-    # Filtro por período (fecha)
-    periodo = request.GET.get('periodo', '')
-    if periodo:
-        hoy = timezone.now()
-        if periodo == 'hoy':
-            cotizaciones = cotizaciones.filter(fecha_creacion__date=hoy.date())
-        elif periodo == 'semana':
-            inicio_semana = hoy - timedelta(days=hoy.weekday())
-            cotizaciones = cotizaciones.filter(fecha_creacion__gte=inicio_semana)
-        elif periodo == 'mes':
-            inicio_mes = hoy.replace(day=1)
-            cotizaciones = cotizaciones.filter(fecha_creacion__gte=inicio_mes)
-        elif periodo == 'ano':
-            inicio_ano = hoy.replace(month=1, day=1)
-            cotizaciones = cotizaciones.filter(fecha_creacion__gte=inicio_ano)
+    # Filtro por estado
+    estado = request.GET.get('estado', '')
+    if estado:
+        cotizaciones = cotizaciones.filter(estado=estado)
+    
+    # Filtro por fecha de creación
+    fecha_creacion = request.GET.get('fecha_creacion', '')
+    if fecha_creacion:
+        cotizaciones = cotizaciones.filter(fecha_creacion__date=fecha_creacion)
     
     cotizaciones = cotizaciones.order_by('-fecha_creacion')
     
     context = {
         'cotizaciones': cotizaciones,
         'buscar': buscar,
-        'periodo': periodo,
+        'estado': estado,
+        'fecha_creacion': fecha_creacion,
     }
     return render(request, 'paginas/lista_cotizaciones.html', context)
 
@@ -237,3 +232,24 @@ def eliminar_cotizacion(request, cotizacion_id):
         'cotizacion': cotizacion
     }
     return render(request, 'paginas/eliminar_cotizacion.html', context)
+
+
+def cambiar_estado(request, cotizacion_id):
+    """Vista para cambiar el estado de una cotización entre Pendiente, Enviada y Aprobada"""
+    cotizacion = get_object_or_404(Quotation, id=cotizacion_id)
+    
+    if request.method == 'POST':
+        # Cambiar el estado en ciclo: pendiente -> enviada -> aprobada -> pendiente
+        if cotizacion.estado == 'pendiente':
+            cotizacion.estado = 'enviada'
+            messages.success(request, f'✅ Cotización marcada como Enviada para {cotizacion.cliente.nombre}')
+        elif cotizacion.estado == 'enviada':
+            cotizacion.estado = 'aprobada'
+            messages.success(request, f'✅ Cotización marcada como Aprobada para {cotizacion.cliente.nombre}')
+        else:
+            cotizacion.estado = 'pendiente'
+            messages.success(request, f'✅ Cotización marcada como Pendiente para {cotizacion.cliente.nombre}')
+        
+        cotizacion.save()
+    
+    return redirect('quotations:lista_cotizaciones')

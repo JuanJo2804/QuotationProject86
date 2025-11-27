@@ -9,4 +9,5 @@ urlpatterns = [
     path('cotizaciones/', views.lista_cotizaciones, name='lista_cotizaciones'),
     path('editar/<int:cotizacion_id>/', views.cotizacion, name='editar_cotizacion'),
     path('eliminar/<int:cotizacion_id>/', views.eliminar_cotizacion, name='eliminar_cotizacion'),
+    path('cambiar-estado/<int:cotizacion_id>/', views.cambiar_estado, name='cambiar_estado'),
 ]
