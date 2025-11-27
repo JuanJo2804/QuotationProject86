@@ -18,27 +18,10 @@ def inicio(request):
 
 
 def lista_cotizaciones(request):
-    """Vista de lista de cotizaciones con filtros avanzados"""
+    """Vista de lista de cotizaciones con filtros"""
     cotizaciones = Quotation.objects.select_related('cliente').all()
     
-    filter_form = QuotationFilterForm(request.GET)
-    if filter_form.is_valid():
-        client_name = filter_form.cleaned_data.get('client_name')
-        product_name = filter_form.cleaned_data.get('product_name')
-        start_date = filter_form.cleaned_data.get('start_date')
-        end_date = filter_form.cleaned_data.get('end_date')
-
-        if client_name:
-            cotizaciones = cotizaciones.filter(cliente__nombre__icontains=client_name)
-        if product_name:
-            # Asumiendo que el nombre del producto está en algún campo de Quotation o un relacionado
-            cotizaciones = cotizaciones.filter(Q(medida__icontains=product_name) | Q(espesor__icontains=product_name)) # Placeholder
-        if start_date:
-            cotizaciones = cotizaciones.filter(fecha_creacion__date__gte=start_date)
-        if end_date:
-            cotizaciones = cotizaciones.filter(fecha_creacion__date__lte=end_date)
-            
-    # Filtro por búsqueda de cliente (mantengo la lógica existente por si se usa de forma adicional)
+    # Filtro por búsqueda de cliente
     buscar = request.GET.get('buscar', '')
     if buscar:
         cotizaciones = cotizaciones.filter(
@@ -46,29 +29,23 @@ def lista_cotizaciones(request):
             Q(cliente__correo__icontains=buscar)
         )
     
-    # Filtro por período (fecha) (mantengo la lógica existente)
-    periodo = request.GET.get('periodo', '')
-    if periodo:
-        hoy = timezone.now()
-        if periodo == 'hoy':
-            cotizaciones = cotizaciones.filter(fecha_creacion__date=hoy.date())
-        elif periodo == 'semana':
-            inicio_semana = hoy - timedelta(days=hoy.weekday())
-            cotizaciones = cotizaciones.filter(fecha_creacion__gte=inicio_semana)
-        elif periodo == 'mes':
-            inicio_mes = hoy.replace(day=1)
-            cotizaciones = cotizaciones.filter(fecha_creacion__gte=inicio_mes)
-        elif periodo == 'ano':
-            inicio_ano = hoy.replace(month=1, day=1)
-            cotizaciones = cotizaciones.filter(fecha_creacion__gte=inicio_ano)
+    # Filtro por estado
+    estado = request.GET.get('estado', '')
+    if estado:
+        cotizaciones = cotizaciones.filter(estado=estado)
+    
+    # Filtro por fecha de creación
+    fecha_creacion = request.GET.get('fecha_creacion', '')
+    if fecha_creacion:
+        cotizaciones = cotizaciones.filter(fecha_creacion__date=fecha_creacion)
     
     cotizaciones = cotizaciones.order_by('-fecha_creacion')
     
     context = {
         'cotizaciones': cotizaciones,
-        'filter_form': filter_form,
         'buscar': buscar,
-        'periodo': periodo,
+        'estado': estado,
+        'fecha_creacion': fecha_creacion,
     }
     return render(request, 'paginas/lista_cotizaciones.html', context)
 
@@ -222,14 +199,17 @@ def eliminar_cotizacion(request, cotizacion_id):
 
 
 def cambiar_estado(request, cotizacion_id):
-    """Vista para cambiar el estado de una cotización entre Pendiente y Finalizado"""
+    """Vista para cambiar el estado de una cotización entre Pendiente, Enviada y Aprobada"""
     cotizacion = get_object_or_404(Quotation, id=cotizacion_id)
     
     if request.method == 'POST':
-        # Cambiar el estado
+        # Cambiar el estado en ciclo: pendiente -> enviada -> aprobada -> pendiente
         if cotizacion.estado == 'pendiente':
-            cotizacion.estado = 'finalizado'
-            messages.success(request, f'✅ Cotización marcada como Finalizada para {cotizacion.cliente.nombre}')
+            cotizacion.estado = 'enviada'
+            messages.success(request, f'✅ Cotización marcada como Enviada para {cotizacion.cliente.nombre}')
+        elif cotizacion.estado == 'enviada':
+            cotizacion.estado = 'aprobada'
+            messages.success(request, f'✅ Cotización marcada como Aprobada para {cotizacion.cliente.nombre}')
         else:
             cotizacion.estado = 'pendiente'
             messages.success(request, f'✅ Cotización marcada como Pendiente para {cotizacion.cliente.nombre}')
