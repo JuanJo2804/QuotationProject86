@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
+import os
 from django.contrib import messages
 from django.db.models import Q
 from datetime import datetime, timedelta
@@ -100,6 +101,9 @@ def cotizacion(request, cotizacion_id=None):
             processor = QuotationProcessor()
             resultado = processor.calcular_cotizacion(datos)
 
+            # (La generación/descarga del PDF se realiza más abajo, luego de
+            # intentar guardar la cotización si se solicitó.)
+
             # Verificar si se presionó el botón "Guardar"
             if 'guardar' in request.POST and resultado.get('success'):
                 try:
@@ -161,10 +165,35 @@ def cotizacion(request, cotizacion_id=None):
                             setattr(cotizacion_existente, key, value)
                         cotizacion_existente.save()
                         messages.success(request, f'✅ Cotización actualizada exitosamente para {datos["cliente"].nombre}')
-                        return redirect('quotations:lista_cotizaciones')
+
+                        # Solo generar PDF y devolver descarga si NO es una petición AJAX
+                        if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+                            try:
+                                datos['usuario'] = request.user
+                                pdf_path = generar_pdf_cotizacion(dimensiones, resultado, gramos, datos, costos)
+                                if os.path.exists(pdf_path):
+                                    f = open(pdf_path, 'rb')
+                                    return FileResponse(f, as_attachment=True, filename=os.path.basename(pdf_path))
+                                else:
+                                    messages.warning(request, '⚠️ PDF generado pero no se encontró el archivo para descargar.')
+                            except Exception as e:
+                                messages.warning(request, f'⚠️ No se pudo generar/descargar el PDF: {str(e)}')
                     else:
                         cotizacion = Quotation.objects.create(**datos_cotizacion)
                         messages.success(request, f'✅ Cotización guardada exitosamente para {datos["cliente"].nombre}')
+
+                        # Solo generar PDF y devolver descarga si NO es una petición AJAX
+                        if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+                            try:
+                                datos['usuario'] = request.user
+                                pdf_path = generar_pdf_cotizacion(dimensiones, resultado, gramos, datos, costos)
+                                if os.path.exists(pdf_path):
+                                    f = open(pdf_path, 'rb')
+                                    return FileResponse(f, as_attachment=True, filename=os.path.basename(pdf_path))
+                                else:
+                                    messages.warning(request, '⚠️ PDF generado pero no se encontró el archivo para descargar.')
+                            except Exception as e:
+                                messages.warning(request, f'⚠️ No se pudo generar/descargar el PDF: {str(e)}')
                     
                 except Exception as e:
                     messages.error(request, f'❌ Error al guardar la cotización: {str(e)}')
@@ -172,6 +201,13 @@ def cotizacion(request, cotizacion_id=None):
             # Si se pidió JSON response (para AJAX)
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse(resultado)
+            # NOTA: La generación y descarga del PDF solo debe ejecutarse cuando el usuario
+            # guarde o cree explícitamente la cotización (esto se maneja en la rama de
+            # 'guardar' más arriba). Para solicitudes que solo son de cálculo (por ejemplo,
+            # cuando se presiona "Calcular"), NO debemos generar un PDF y debemos simplemente
+            # renderizar la plantilla (o devolver JSON si es por AJAX). Esto evita que la
+            # generación del PDF interfiera con la respuesta JSON o con el flujo normal de renderizado.
+
 
     context = {
         'form': form,
