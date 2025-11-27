@@ -292,6 +292,20 @@ class Quotation(models.Model):
     )
     
     # ========== METADATOS ==========
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('enviada', 'Enviada'),
+        ('aprobada', 'Aprobada'),
+    ]
+    
+    estado = models.CharField(
+        "Estado",
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='pendiente',
+        help_text="Estado de la cotización"
+    )
+    
     fecha_creacion = models.DateTimeField(
         "Fecha de creación",
         auto_now_add=True,
